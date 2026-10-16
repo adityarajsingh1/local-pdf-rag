@@ -22,6 +22,16 @@ ollama pull llama3.2         # for the answers
 
 The models and the Ollama address can be changed with `EMBED_MODEL`, `CHAT_MODEL` and `OLLAMA_URL` (see `.env.example`). If Ollama isn't running or a model is missing, it tells you what to run instead of dumping a stack trace.
 
+### Indexing
+
+```bash
+python ingest.py           # indexes everything in docs/
+python ingest.py ~/papers  # or any other folder
+python ingest.py --reset   # start the index from scratch
+```
+
+It reads each PDF, splits it into chunks, gets an embedding for every chunk from Ollama and stores them in chromadb (in `chroma_db/`, so it survives restarts). Re-running replaces a file's chunks instead of adding duplicates. Each embedding model gets its own collection, because vectors from different models can't be compared.
+
 Tests: `python -m pytest tests` (they fake Ollama, so you don't need it running)
 
-Next up: the vector store and then actually asking questions.
+Next up: actually asking questions, with answers that say which file and page they came from.
