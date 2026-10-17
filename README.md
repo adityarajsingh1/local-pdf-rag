@@ -34,4 +34,13 @@ It reads each PDF, splits it into chunks, gets an embedding for every chunk from
 
 Tests: `python -m pytest tests` (they fake Ollama, so you don't need it running)
 
-Next up: actually asking questions, with answers that say which file and page they came from.
+### Asking
+
+```bash
+python ask.py "what does the warranty cover?"
+python ask.py -k 8 --show-chunks "summarise chapter 2"
+```
+
+It embeds the question, pulls the 5 closest chunks (`-k` to change that) out of chromadb and sends them to the chat model, each labelled with its file and page. The prompt tells the model to answer only from those excerpts, to say so when the answer isn't there, and to cite like `[manual.pdf p.12]`. Under the answer it lists every page it used, and `--show-chunks` prints the actual text so you can check it.
+
+Next up: an interactive mode so you don't have to restart for every question.
