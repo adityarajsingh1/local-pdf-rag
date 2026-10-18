@@ -42,3 +42,11 @@ def answer(question, store, client, k=5):
         return "The index is empty, run `python ingest.py` first.", [], []
     reply = client.chat(build_messages(question, hits))
     return reply, sources(hits), hits
+
+
+def answer_stream(question, store, client, k=5):
+    """Like answer(), but the reply comes back piece by piece. Returns (pieces, sources, hits)."""
+    hits = retrieve(question, store, client, k)
+    if not hits:
+        return iter(["The index is empty, run `python ingest.py` first."]), [], []
+    return client.chat_stream(build_messages(question, hits)), sources(hits), hits

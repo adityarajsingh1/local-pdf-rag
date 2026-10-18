@@ -1,3 +1,4 @@
 pypdf>=4.0
 requests>=2.31
 chromadb>=1.0
+rich>=13

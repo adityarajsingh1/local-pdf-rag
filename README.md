@@ -37,10 +37,13 @@ Tests: `python -m pytest tests` (they fake Ollama, so you don't need it running)
 ### Asking
 
 ```bash
-python ask.py "what does the warranty cover?"
+python ask.py "what does the warranty cover?"          # one question
+python ask.py                                           # keep asking until /quit
 python ask.py -k 8 --show-chunks "summarise chapter 2"
 ```
 
+In the interactive mode there are a few commands: `/k 8` to change how many chunks go to the model, `/chunks` to show the text behind each answer, `/files` to see what's indexed and `/quit`. Answers stream in as the model writes them, so a slow local model doesn't look frozen.
+
 It embeds the question, pulls the 5 closest chunks (`-k` to change that) out of chromadb and sends them to the chat model, each labelled with its file and page. The prompt tells the model to answer only from those excerpts, to say so when the answer isn't there, and to cite like `[manual.pdf p.12]`. Under the answer it lists every page it used, and `--show-chunks` prints the actual text so you can check it.
 
-Next up: an interactive mode so you don't have to restart for every question.
+Next up: only re-indexing PDFs that actually changed, so `ingest.py` gets fast on big folders.
