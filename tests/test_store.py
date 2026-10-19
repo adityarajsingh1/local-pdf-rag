@@ -31,7 +31,7 @@ def test_ingest_twice_does_not_duplicate(tmp_path, fake_ollama):
     make_pdf(docs / "cake.pdf", ["Mix the flour, sugar and eggs."])
     store = Store(path=str(tmp_path / "db"), embed_model="fake")
     first = index_folder(docs, store, fake_ollama)
-    index_folder(docs, store, fake_ollama)
-    assert first == 3 and store.count() == 3
+    index_folder(docs, store, fake_ollama, force=True)
+    assert first["chunks"] == 3 and store.count() == 3
     hit, _ = store.search(fake_embed(["how does the power get ashore? export cables"])[0], k=1)[0]
     assert (hit.file, hit.page) == ("wind.pdf", 2)

@@ -27,10 +27,11 @@ The models and the Ollama address can be changed with `EMBED_MODEL`, `CHAT_MODEL
 ```bash
 python ingest.py           # indexes everything in docs/
 python ingest.py ~/papers  # or any other folder
+python ingest.py --force   # re-embed everything, even unchanged files
 python ingest.py --reset   # start the index from scratch
 ```
 
-It reads each PDF, splits it into chunks, gets an embedding for every chunk from Ollama and stores them in chromadb (in `chroma_db/`, so it survives restarts). Re-running replaces a file's chunks instead of adding duplicates. Each embedding model gets its own collection, because vectors from different models can't be compared.
+It reads each PDF, splits it into chunks, gets an embedding for every chunk from Ollama and stores them in chromadb (in `chroma_db/`, so it survives restarts). Re-running is cheap: every chunk remembers a hash of its PDF (plus the chunk settings), so files that didn't change are skipped, edited ones are re-embedded and PDFs you deleted from the folder are dropped from the index. New embeddings are made before the old chunks are removed, so if Ollama dies halfway nothing is lost. Each embedding model gets its own collection, because vectors from different models can't be compared.
 
 Tests: `python -m pytest tests` (they fake Ollama, so you don't need it running)
 
@@ -46,4 +47,4 @@ In the interactive mode there are a few commands: `/k 8` to change how many chun
 
 It embeds the question, pulls the 5 closest chunks (`-k` to change that) out of chromadb and sends them to the chat model, each labelled with its file and page. The prompt tells the model to answer only from those excerpts, to say so when the answer isn't there, and to cite like `[manual.pdf p.12]`. Under the answer it lists every page it used, and `--show-chunks` prints the actual text so you can check it.
 
-Next up: only re-indexing PDFs that actually changed, so `ingest.py` gets fast on big folders.
+Next up: a small Streamlit app, for when I don't want to use the terminal.

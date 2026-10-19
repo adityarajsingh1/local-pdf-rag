@@ -42,14 +42,22 @@ class Store:
     def remove_file(self, name):
         self.collection.delete(where={"file": name})
 
-    def add(self, chunks, vectors):
+    def indexed(self):
+        """{file name: (fingerprint, folder it came from)} for everything in the index."""
+        out = {}
+        for m in self.collection.get(include=["metadatas"])["metadatas"]:
+            out[m["file"]] = (m.get("fingerprint", ""), m.get("folder", ""))
+        return out
+
+    def add(self, chunks, vectors, fingerprint="", folder=""):
         if not chunks:
             return
         self.collection.upsert(
             ids=[c.id for c in chunks],
             embeddings=vectors,
             documents=[c.text for c in chunks],
-            metadatas=[{"file": c.file, "page": c.page, "index": c.index} for c in chunks],
+            metadatas=[{"file": c.file, "page": c.page, "index": c.index,
+                        "fingerprint": fingerprint, "folder": folder} for c in chunks],
         )
 
     def search(self, vector, k=5):
