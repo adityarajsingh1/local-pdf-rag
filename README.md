@@ -47,4 +47,12 @@ In the interactive mode there are a few commands: `/k 8` to change how many chun
 
 It embeds the question, pulls the 5 closest chunks (`-k` to change that) out of chromadb and sends them to the chat model, each labelled with its file and page. The prompt tells the model to answer only from those excerpts, to say so when the answer isn't there, and to cite like `[manual.pdf p.12]`. Under the answer it lists every page it used, and `--show-chunks` prints the actual text so you can check it.
 
-Next up: a small Streamlit app, for when I don't want to use the terminal.
+### In the browser
+
+```bash
+streamlit run app.py
+```
+
+Upload PDFs in the sidebar and press **index** (they're saved to `docs/`, and only new or changed files get embedded), then chat. Answers stream in, the pages they came from are listed under each answer and you can open the exact chunks that were used. It's the same index as the command line tools, so anything indexed with `ingest.py` is already there.
+
+Next up: more tests for the whole pipeline, then a proper write-up.
