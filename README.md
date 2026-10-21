@@ -33,7 +33,7 @@ python ingest.py --reset   # start the index from scratch
 
 It reads each PDF, splits it into chunks, gets an embedding for every chunk from Ollama and stores them in chromadb (in `chroma_db/`, so it survives restarts). Re-running is cheap: every chunk remembers a hash of its PDF (plus the chunk settings), so files that didn't change are skipped, edited ones are re-embedded and PDFs you deleted from the folder are dropped from the index. New embeddings are made before the old chunks are removed, so if Ollama dies halfway nothing is lost. Each embedding model gets its own collection, because vectors from different models can't be compared.
 
-Tests: `python -m pytest tests` (they fake Ollama, so you don't need it running)
+Tests: `python -m pytest tests` (they fake Ollama, so you don't need it running). `tests/test_pipeline.py` runs the real `ingest.py` and `ask.py` on a couple of generated PDFs against a small fake Ollama server, so the whole path from PDF to cited answer is covered, plus the "Ollama isn't running" and "model not pulled" errors.
 
 ### Asking
 
@@ -55,4 +55,4 @@ streamlit run app.py
 
 Upload PDFs in the sidebar and press **index** (they're saved to `docs/`, and only new or changed files get embedded), then chat. Answers stream in, the pages they came from are listed under each answer and you can open the exact chunks that were used. It's the same index as the command line tools, so anything indexed with `ingest.py` is already there.
 
-Next up: more tests for the whole pipeline, then a proper write-up.
+Next up: a proper write-up.
